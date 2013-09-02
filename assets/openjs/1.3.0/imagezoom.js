@@ -15,8 +15,10 @@ KISSY.makeAdaptor({
 	},
 	methods: {
 	},
-	static_methods: {
-	},
 	events: {
+		show: ['currentTarget', 'target', 'timeStamp', 'type'],
+		hide: ['currentTarget', 'target', 'timeStamp', 'type']
+	},
+	static_methods: {
 	}
 });

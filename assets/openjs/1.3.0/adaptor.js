@@ -85,6 +85,36 @@ KISSY.makeAdaptor = function( def ) {
 				CreateSafeMethod( method );
 			}
 
+			// event handler 适配接口
+			Adaptor.prototype[ 'on' ] = function( name, guestCallback, scope ) {
+				// 这里，this 是 Adaptor 实例
+
+				// 检查是否为有定义的 event
+				var props = def.events[ name ];
+				if ( ! props || ! KISSY.isArray(props) ) {
+					throw new Error('event "' + name + '" not defined properly.');
+				}
+
+				// 调用对应的组件实例的 on()
+				var ret = this._ADAPTEE_.on( name, function( e ) {
+					// TODO: 根据 props 列表构建 event 对象回传给 guest code
+					var event = {};
+					for ( var i = 0; i < props.length; i ++ ) {
+						var prop = props[i];
+						event[ prop ] = me.safeValueHostToGuest( e[ prop ] );
+					}
+
+					// 这里就不用对返回值做保护处理了，因为它不会对 host code 产生什么威胁
+					return guestCallback.call( scope || this, event );
+				});
+
+				// 把返回值转换成适合返回给 guest code 的值
+				ret = me.safeValueHostToGuest( ret );
+
+				return ret;
+			};
+			frameGroup.grantMethod( Adaptor, 'on' );
+
 			// 生成适配器的静态代理 method
 			var CreateSafeStaticMethod = function( Ctor, method ) {
 				Ctor[ method ] = frameGroup.markFunction( function() {

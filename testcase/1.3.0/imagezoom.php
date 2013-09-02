@@ -1,5 +1,18 @@
-<!--页头公共资源引入-->
-<? include("../common/head.php");?>
+<!doctype html>
+<html>
+<head>
+<meta charset="gbk">
+<title></title>
+<script type="text/javascript" src="http://a.tbcdn.cn/s/kissy/1.3.0/kissy-min.js"></script>
+<script type="text/javascript" src="http://a.tbcdn.cn/apps/taesite/balcony/core/r3002/caja/caja-min.js"></script>
+
+<script type="text/javascript" src="../../assets/base/caja-util.js"></script>
+<script type="text/javascript" src="../../assets/base/caja-log.js"></script>
+<script type="text/javascript" src="../../assets/base/balcony.js"></script>
+<script src="../../test/assets.js"></script>
+</head>
+<body>
+
 <script type="text/javascript" src="../../assets/openjs/1.3.0/adaptor.js"></script>
 
 <link rel="stylesheet" href="imagezoom.css"/>
@@ -35,7 +48,17 @@
 
 <!--这里是将自己的js让服务端编译一下，配置下服务端的php路径和自己的js即可，注意路径-->
 <?
-    $jsurl="testcase/1.3.0/imagezoom.js";//注意路径
-    $jsservice="../common/cajoled_service.php";//注意路径
-    include("../common/foot.php");//引入foot
+switch ('caja') {
+case 'caja':
+	$jsurl = "testcase/1.3.0/imagezoom.js"; //注意路径
+	$jsservice = "../common/cajoled_service.php"; //注意路径
+	echo '<script type="text/javascript" src="'.$jsservice.'?jsurl='.$jsurl.'"></script>';
+	echo '<script src="../../assets/base/setup.js"></script>';
+	break;
+case 'native':
+	echo '<script src="imagezoom.js"></script>';
+	break;
+}
 ?>
+</body>
+</html>
