@@ -14,8 +14,8 @@
     <li><a href="./thirdparty/jssdk.php">jssdk</a></li>
 
     <li><a href="./1.3.0/imagezoom.php">ImageZoom</a></li>
-	<!--
     <li><a href="./1.3.0/nodelist.php">NodeList</a></li>
+	<!--
     <li><a href="./gallery/slide.php">slide</a></li>
 	-->
 </ul>
