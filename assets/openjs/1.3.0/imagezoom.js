@@ -1,5 +1,7 @@
 /**
  * @fileOverview ImageZoom µÄ°²È«ÊÊÅäÆ÷
+ *
+ * http://docs.kissyui.com/docs/html/api/component/imagezoom/
  */
 KISSY.makeAdaptor({
 	requires: ['imagezoom'],

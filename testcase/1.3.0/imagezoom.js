@@ -13,14 +13,17 @@ function test( ImageZoom ) {
 
 	iz.on( 'show', function( e ) {
 		console.log('show:', this, e, e.currentTarget);
+		console.log('bigImageWidth:', iz.bigImageWidth);
+		console.log('imageSrc:', iz.imageSrc);
 	});
 
 	iz.on( 'hide', function( e ) {
 		console.log('hide:', this, e, e.currentTarget);
+		iz.imageSrc = 'http://a.tbcdn.cn/s/kissy/logo.png';
 	});
 }
 
-// 兼容 caja 和 native 两种运行环境
+// 兼容 caja 和 native 两种测试运行环境
 if ( KISSY.use ) {
 	KISSY.use("dom,event,imagezoom", function(S, DOM, Event, ImageZoom) {
 		test( ImageZoom );
