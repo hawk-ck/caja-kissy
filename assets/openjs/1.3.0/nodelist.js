@@ -94,6 +94,10 @@ KISSY.makeAdaptor({
 
 		all: ['selector']
 	},
+	events: {
+		click: ['currentTarget', 'target', 'timeStamp', 'type'],
+		mouseover: ['currentTarget', 'target', 'timeStamp', 'type']
+	},
 	static_methods: {
 		all: ['selector'],
 		one: ['selector']

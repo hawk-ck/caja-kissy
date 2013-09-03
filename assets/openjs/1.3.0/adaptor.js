@@ -104,7 +104,7 @@ KISSY.makeAdaptor = function( def ) {
 						var ret = this._ADAPTEE_[ method ].apply( this._ADAPTEE_, args );
 
 						// 把返回值转换成适合返回给 guest code 的值
-						ret = me.safeValueHostToGuest( ret );
+						ret = me.safeValueHostToGuest( ret, context );
 
 						// TODO: 考虑是否需要根据 def 中的某种配置对返回值做处理
 						// Note: 这里的 ret 对象类型如果是未经 mark 的，该怎样？
@@ -135,7 +135,7 @@ KISSY.makeAdaptor = function( def ) {
 						var event = {};
 						for ( var i = 0; i < props.length; i ++ ) {
 							var prop = props[i];
-							event[ prop ] = me.safeValueHostToGuest( e[ prop ] );
+							event[ prop ] = me.safeValueHostToGuest( e[ prop ], context );
 						}
 
 						// 这里就不用对返回值做保护处理了，因为它不会对 host code 产生什么威胁
@@ -143,7 +143,7 @@ KISSY.makeAdaptor = function( def ) {
 					});
 
 					// 把返回值转换成适合返回给 guest code 的值
-					ret = me.safeValueHostToGuest( ret );
+					ret = me.safeValueHostToGuest( ret, context );
 
 					return ret;
 				};
@@ -162,7 +162,7 @@ KISSY.makeAdaptor = function( def ) {
 						var ret = Adaptee[ method ].apply( null, args );
 
 						// 把返回值转换成适合返回给 guest code 的值
-						ret = me.safeValueHostToGuest( ret );
+						ret = me.safeValueHostToGuest( ret, context );
 
 						return ret;
 					});
@@ -213,8 +213,8 @@ KISSY.makeAdaptor.safeOneArgGuestToHost = function( origArg, type, adaptor, cont
 
 	} else if ( type === 'selector' ) {
 
-		// TODO: 这里要用 context 对 selector 的范围进行约束
-		safeArg = origArg;
+		// 用 context 对 selector 的范围进行约束
+		safeArg = KISSY.makeAdaptor.restrictNodes( origArg, context );
 
 	} else if ( type === 'callback' ) {
 
@@ -248,7 +248,7 @@ KISSY.makeAdaptor.safeArgsGuestToHost = function( origArgs, types, adaptor, cont
 	return safeArgs;
 };
 
-KISSY.makeAdaptor.safeValueHostToGuest = function( origValue ) {
+KISSY.makeAdaptor.safeValueHostToGuest = function( origValue, context ) {
 	var ret = origValue;
 
 	// 如果原值是已被适配对象，则替换成适配器本身
@@ -263,10 +263,38 @@ KISSY.makeAdaptor.safeValueHostToGuest = function( origValue ) {
 		ret = adaptor;
 	}
 
+	// DOM 对象需要特别的 tame
+	else if ( typeof ret == 'object' && ! ret._ADAPTEE_ && ret instanceof Node ) {
+		ret = context.frame.imports.tameNode___( ret, true );
+		// TODO: 需要进一步约束其范围
+	}
+
+	// TODO: Array 需要进一步处理
+
 	return ret;
 };
 
 KISSY.makeAdaptor.adaptTo = function( adaptor, adaptee ) {
 	adaptor._ADAPTEE_ = adaptee;
 	adaptee._ADAPTOR_ = adaptor;
+};
+
+KISSY.makeAdaptor.restrictNodes = function( s, context ) {
+	var query = function( s, root ) {
+		var ret = [];
+		if ( root ) {
+			root = query( root );
+		} else {
+			root = [];
+		}
+
+		if ( KISSY.isString( s ) ) {
+			ret = KISSY.query( s, root[0] || context.mod );
+		} else {
+			ret = KISSY.query( s );
+		}
+
+		return ret;
+	};
+	return query( s );
 };

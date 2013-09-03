@@ -10,6 +10,14 @@ console.log('children', children);
 console.log('children.text()', children.text());
 console.log('children.lengthx', children.lengthx);
 
+parent.on( 'click', function( e ) {
+	console.log('click:', this, e);
+	var div = parent.getDOMNode();
+	console.log('getDOMNode', div, div.innerHTML);
+});
+parent.on( 'mouseover', function( e ) {
+	console.log('mouseover:', e);
+});
 // var parent = NodeList('<div>html</div>');
 // console.log('ctor', parent);
 // var child = parent.all('div');
